@@ -1,22 +1,22 @@
 # flutter_background_2
 
-Servicio de ubicación en segundo plano (Foreground Service) que envía la posición por HTTP cada 5 segundos. Incluye pantalla de prueba para iniciar/detener el servicio y configurar la URL de envío.
+Background location foreground service that sends the device position via HTTP every 5 seconds. Includes a test screen to start/stop the service and configure the target URL.
 
-## Resumen
-- **Objetivo**: Ejecutar código en background de forma continua (incluso con la app cerrada) y enviar GPS por POST cada 5s.
-- **Plataforma principal**: Android (Foreground Service con notificación persistente).
-- **Control**: UI con botones de Iniciar/Detener y campo para URL.
+## Overview
+- Objective: Run continuous background code (even when the app is closed) and send GPS via POST every 5s.
+- Platform: Android (Foreground Service with a persistent notification).
+- Control: UI with Start/Stop buttons and a URL input.
 
-## Paquetes utilizados
-- `flutter_background_service`: motor del servicio en background.
-- `flutter_local_notifications`: creación del canal/notification requerida por Android 8+.
-- `geolocator`: obtención de ubicación (foreground/background) y utilidades.
-- `permission_handler`: solicitud de permisos (notificaciones y ubicación Always/WhileInUse).
-- `http`: envío HTTP POST de la posición.
+## Packages used
+- `flutter_background_service`: background execution engine.
+- `flutter_local_notifications`: creates the notification channel required on Android 8+.
+- `geolocator`: location retrieval (foreground/background) and utilities.
+- `permission_handler`: runtime permissions (notifications and location Always/WhileInUse).
+- `http`: HTTP POST to send the position.
 
-> Importante: NO agregues manualmente `flutter_background_service_android` en tu pubspec; es el paquete federado interno. Usar directamente puede causar errores en el isolate de background. Solo usa `flutter_background_service`.
+> Important: DO NOT add `flutter_background_service_android` manually in your pubspec; it is the federated Android package. Adding it directly can cause errors in the background isolate. Only depend on `flutter_background_service`.
 
-### pubspec.yaml (ejemplo)
+### pubspec.yaml (example)
 ```yaml
 dependencies:
   flutter:
@@ -28,10 +28,10 @@ dependencies:
   http: ^1.5.0
 ```
 
-## Configuración de Android
+## Android configuration
 
-### 1) Permisos y service (AndroidManifest.xml)
-Ubicación: `android/app/src/main/AndroidManifest.xml`
+### 1) Permissions and service (AndroidManifest.xml)
+Path: `android/app/src/main/AndroidManifest.xml`
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET" />
@@ -54,8 +54,8 @@ Ubicación: `android/app/src/main/AndroidManifest.xml`
 </manifest>
 ```
 
-### 2) Icono pequeño para la notificación
-Archivo vectorial en: `android/app/src/main/res/drawable/ic_bg_service_small.xml`
+### 2) Small notification icon
+Vector asset at: `android/app/src/main/res/drawable/ic_bg_service_small.xml`
 ```xml
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
@@ -66,8 +66,8 @@ Archivo vectorial en: `android/app/src/main/res/drawable/ic_bg_service_small.xml
 </vector>
 ```
 
-### 3) Desugaring en Gradle (requerido por notificaciones)
-Archivo: `android/app/build.gradle.kts`
+### 3) Gradle desugaring (required by notifications)
+Path: `android/app/build.gradle.kts`
 ```kotlin
 android {
   compileOptions {
@@ -83,61 +83,61 @@ dependencies {
 }
 ```
 
-## Implementación en Dart
+## Dart implementation
 
-### 1) Servicio (`lib/core/services/background_service.dart`)
-- Crea un canal de notificación con `flutter_local_notifications` ANTES de configurar el servicio.
-- Configura `FlutterBackgroundService` con `AndroidConfiguration`:
+### 1) Service (`lib/core/services/background_service.dart`)
+- Create a notification channel with `flutter_local_notifications` BEFORE configuring the service.
+- Configure `FlutterBackgroundService` with `AndroidConfiguration`:
   - `isForegroundMode: true`
-  - `notificationChannelId: 'bg_location'` (debe coincidir con el canal creado)
+  - `notificationChannelId: 'bg_location'` (must match the created channel)
   - `initialNotificationTitle/Content`
-- En `onStart` (con `@pragma('vm:entry-point')`):
-  - Llama `service.setAsForegroundService()` (Android).
-  - `Timer.periodic(Duration(seconds: 5))` para obtener GPS y enviar POST.
-  - Fallback a `getLastKnownPosition()` si `getCurrentPosition` falla/expira.
-  - Logs `print/debugPrint` para trazar ejecución y códigos HTTP.
-- `BackgroundServiceManager.start()` valida permisos:
-  - Notificaciones (Android 13+).
-  - Ubicación (`WhileInUse`/`Always`) y GPS activo.
-  - Persiste preferencia del usuario en `SharedPreferences`.
+- In `onStart` (with `@pragma('vm:entry-point')`):
+  - Call `service.setAsForegroundService()` (Android).
+  - Use `Timer.periodic(Duration(seconds: 5))` to get GPS and send POST.
+  - Fallback to `getLastKnownPosition()` if `getCurrentPosition` fails/expires.
+  - Add `print/debugPrint` logs to trace execution and HTTP codes.
+- `BackgroundServiceManager.start()` validates permissions:
+  - Notifications (Android 13+).
+  - Location (`WhileInUse`/`Always`) and GPS turned on.
+  - Persists the user's preference in `SharedPreferences`.
 
-### 2) Inicialización en `main.dart`
-Antes de `runApp(...)`:
+### 2) Initialize in `main.dart`
+Before `runApp(...)`:
 ```dart
 WidgetsFlutterBinding.ensureInitialized();
 await BackgroundServiceManager.initialize();
 ```
 
-### 3) UI de prueba (Home)
-- Pantalla que muestra estado, permite **Iniciar/Detener** y configurar la **URL**.
-- La URL se guarda en `SharedPreferences` para usarla en el servicio.
+### 3) Test UI (Home)
+- Screen shows status, allows **Start/Stop**, and lets you set the **URL**.
+- The URL is saved in `SharedPreferences` and used by the service.
 
-## Pasos para aplicar en otro proyecto
-1. **Agregar dependencias** en `pubspec.yaml` (ver arriba).
-2. **Crear** `lib/core/services/background_service.dart` con:
-   - Inicialización del canal de notificaciones y `FlutterBackgroundService`.
-   - `onStart` con `Timer.periodic` y envío HTTP.
-   - Métodos `start/stop/isRunning` y manejo de permisos.
-3. **Manifest Android**: permisos + `<service ... foregroundServiceType="location" stopWithTask="false" android:exported="true"/>`.
-4. **Icono** `ic_bg_service_small.xml` en `res/drawable`.
-5. **Gradle**: habilitar desugaring y agregar `desugar_jdk_libs`.
-6. **Inicializar** en `main.dart` llamando `BackgroundServiceManager.initialize()`.
-7. **(Opcional)** UI de control para iniciar/detener y cambiar la URL.
-8. **Probar en dispositivo real** (no emulador) y conceder permisos.
+## How to apply this to another project
+1. Add dependencies to `pubspec.yaml` (see above).
+2. Create `lib/core/services/background_service.dart` with:
+   - Notification channel creation and `FlutterBackgroundService` setup.
+   - `onStart` with `Timer.periodic` and HTTP sending.
+   - `start/stop/isRunning` methods and permission handling.
+3. AndroidManifest: permissions + `<service ... foregroundServiceType="location" stopWithTask="false" android:exported="true"/>`.
+4. Icon `ic_bg_service_small.xml` in `res/drawable`.
+5. Gradle: enable desugaring and add `desugar_jdk_libs`.
+6. Initialize in `main.dart` with `BackgroundServiceManager.initialize()`.
+7. (Optional) Control UI to start/stop and change the URL.
+8. Test on a real device (not emulator) and grant permissions.
 
-## Pruebas
-- URL de ejemplo: `https://xxxxxxxxx/xxxxx` (cambia por tu endpoint) o prueba con `https://httpbin.org/post`.
-- Al iniciar el servicio, verás una notificación persistente.
-- En consola deberían aparecer logs `[BG]` con coordenadas y `posted -> <status>`.
+## Testing
+- Example URL: `https://xxxxxxxxx/xxxxx` (replace with your endpoint) or test with `https://httpbin.org/post`.
+- When the service starts, you should see a persistent notification.
+- In the console, look for `[BG]` logs with coordinates and `posted -> <status>`.
 
-## Solución de problemas
-- **Bad notification for startForeground**: crea el canal de notificación antes de iniciar el servicio y define `ic_bg_service_small`.
-- **Error del plugin en isolate**: no agregues `flutter_background_service_android` al pubspec; usa solo `flutter_background_service`.
-- **No llegan posiciones**:
-  - Revisa permisos (ubicación “Permitir siempre” si aplica) y que el GPS esté activado.
-  - Desactiva optimización de batería/auto-start en OEMs (MIUI/Huawei/etc.).
-  - Prueba con `httpbin.org/post` para aislar endpoint/payload/headers.
+## Troubleshooting
+- Bad notification for startForeground: Create the notification channel before starting the service and set `ic_bg_service_small`.
+- Plugin isolate error: Do not add `flutter_background_service_android` to pubspec; only use `flutter_background_service`.
+- No positions received:
+  - Check permissions (possibly “Allow all the time”) and ensure GPS is on.
+  - Disable battery optimization/enable auto-start for OEMs (MIUI/Huawei/etc.).
+  - Try with `httpbin.org/post` to isolate endpoint/payload/headers.
 
-## Notas
-- Mantener intervalos muy cortos afecta la batería. Ajusta según tus necesidades.
-- No incluyas llaves o tokens sensibles en el repositorio.
+## Notes
+- Short intervals significantly affect battery usage. Adjust to your needs.
+- Do not commit keys or sensitive tokens to the repository.
