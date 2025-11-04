@@ -36,7 +36,7 @@ class _HomeMainPageState extends State<HomeMainPage> {
               selectedItemColor: AppColors.primary,
               showUnselectedLabels: false,
               onTap: routerCtr.onItemTapped,
-              items: List.generate(1, (i) => _bottomNavBarItem(i)),
+              items: List.generate(3, (i) => _bottomNavBarItem(i)),
             ),
           ),
         ),
