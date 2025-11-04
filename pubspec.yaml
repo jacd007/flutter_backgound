@@ -1,0 +1,123 @@
+name: flutter_background_2
+description: "A new Flutter project."
+
+publish_to: 'none' 
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+# Dependencies
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  get: ^4.7.2
+  loading_animation_widget: ^1.3.0
+  cached_network_image: ^3.4.1
+  intl: ^0.20.2
+  shared_preferences: ^2.5.3
+  fluttertoast: ^9.0.0
+  google_fonts: ^6.3.2
+  toastification: ^3.0.3
+  flutter_background_service: ^5.1.0
+  geolocator: ^14.0.2
+  http: ^1.5.0
+  permission_handler: ^12.0.1
+  flutter_local_notifications: ^19.5.0
+
+dev_dependencies:
+  change_app_package_name: ^1.4.0
+  # flutter_native_splash:
+  flutter_launcher_icons: ^0.14.2
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter
+
+# In Terminal run:
+# flutter clean && flutter pub get && flutter pub run flutter_launcher_icons:main
+flutter_icons:
+  android: true
+  ios: true
+  web:
+    generate: true
+    image_path: "assets/logo.png"
+    background_color: "#009688"
+    theme_color: "#009688"
+  image_path: "assets/logo.png"
+  adaptive_icon_background: "#009688"
+  adaptive_icon_foreground: "assets/logo_foreground.png"
+
+flutter:
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/
+    - assets/files/
+    - assets/fonts/
+    - assets/icons/
+    - assets/images/
+    - assets/onboarding/
+
+  fonts:
+    - family: CustomIcons
+      fonts:
+        - asset: assets/fonts/CustomIcons.ttf
+    - family: CustomIcons2
+      fonts:
+        - asset: assets/fonts/CustomIcons2.ttf
+    # fonts text
+    - family: Billabong
+      fonts:
+        - asset: assets/fonts/Billabong.ttf
+    - family: GrandHotel
+      fonts:
+        - asset: assets/fonts/GrandHotel.otf
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/OpenSans.ttf
+    - family: Oswald
+      fonts:
+        - asset: assets/fonts/Oswald.ttf
+    - family: Quicksand
+      fonts:
+        - asset: assets/fonts/Quicksand.otf
+    - family: BeautifulPeople
+      fonts:
+        - asset: assets/fonts/BeautifulPeople.ttf
+    - family: BeautyMountains
+      fonts:
+        - asset: assets/fonts/BeautyMountains.ttf
+    - family: BiteChocolate
+      fonts:
+        - asset: assets/fonts/BiteChocolate.ttf
+    - family: BlackberryJam
+      fonts:
+        - asset: assets/fonts/BlackberryJam.ttf
+    - family: Tomatoes
+      fonts:
+        - asset: assets/fonts/Tomatoes.ttf
+    - family: BunchBlossoms
+      fonts:
+        - asset: assets/fonts/BunchBlossoms.ttf
+    - family: CinderellaRegular
+      fonts:
+        - asset: assets/fonts/CinderellaRegular.ttf
+    - family: Countryside
+      fonts:
+        - asset: assets/fonts/Countryside.ttf
+    - family: Halimun
+      fonts:
+        - asset: assets/fonts/Halimun.ttf
+    - family: LemonJelly
+      fonts:
+        - asset: assets/fonts/LemonJelly.ttf
+    - family: QuiteMagicalRegular
+      fonts:
+        - asset: assets/fonts/QuiteMagicalRegular.ttf
+    - family: TropicalAsianDemoRegular
+      fonts:
+        - asset: assets/fonts/TropicalAsianDemoRegular.ttf
+    - family: VeganStyle
