@@ -101,6 +101,11 @@ class PermissionUtil {
   static Future<bool> checkAllBackgroundPermissions(
     BuildContext context,
   ) async {
+    // Notificaciones (Android 13+ y iOS)
+    if (await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
+
     // 1. Verificar y solicitar permisos de Ubicación Permanente
     bool locationOk = await _checkLocationPermissions(context);
     if (!locationOk) {
