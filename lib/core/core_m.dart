@@ -35,6 +35,7 @@ export 'translation/es.dart';
 // utils
 export 'utils/extension_custom.dart';
 export 'utils/image_cache_manager.dart';
+export 'utils/permissions_util.dart';
 export 'utils/shared_prefs.dart';
 export 'utils/url_launcher.dart';
 export 'utils/utils_compressor.dart';

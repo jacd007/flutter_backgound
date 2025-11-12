@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:flutter/widgets.dart';
 
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
@@ -147,13 +146,10 @@ void onStart(ServiceInstance service) async {
     }
 
     try {
-      print('[BG] tick ${DateTime.now().toIso8601String()}');
+      debugPrint('[BG] tick ${DateTime.now().toIso8601String()}');
       Position? pos;
       try {
-        pos = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.best,
-          timeLimit: const Duration(seconds: 8),
-        );
+        pos = await Geolocator.getCurrentPosition();
       } catch (e) {
         debugPrint('[BG] getCurrentPosition error: $e');
       }
@@ -162,7 +158,7 @@ void onStart(ServiceInstance service) async {
         debugPrint('[BG] no position available');
         return;
       }
-      print(
+      debugPrint(
         '[BG] position lat=${pos.latitude}, lon=${pos.longitude}, acc=${pos.accuracy}',
       );
       final url = await _resolveServerUrl();
@@ -182,7 +178,7 @@ void onStart(ServiceInstance service) async {
         body: body,
       );
       final code = resp.statusCode;
-      print('[BG] posted -> $code');
+      debugPrint('[BG] posted -> $code');
       if (code < 200 || code >= 300) {
         debugPrint('[BG] response body: ${resp.body}');
       }

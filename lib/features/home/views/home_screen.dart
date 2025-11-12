@@ -28,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _start() async {
+    final check = await PermissionUtil.checkAllBackgroundPermissions(context);
+    if (!check) return;
     final ok = await BackgroundServiceManager.start();
     if (!ok && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
